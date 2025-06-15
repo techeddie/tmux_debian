@@ -2,10 +2,11 @@
 
 Requirements: `tmux` version 1.9 (or higher), `git`, `bash`.
 
-Clone TPM:
+Clone TPM and TMUX-RESURRECT:
 
 ```bash
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+git clone https://github.com/tmux-plugins/tmux-resurrect ~/.tmux/plugins/tmux-resurrect
 ```
 
 Put this at the bottom of `~/.tmux.conf` (`$XDG_CONFIG_HOME/tmux/tmux.conf`
