@@ -39,6 +39,13 @@ Reload TMUX environment so TPM is sourced:
 tmux source ~/.tmux.conf
 ```
 
+Attach to existing tmux session on login
+```bash
+  if [ -z "$TMUX" ] && [ -z "$LF_LEVEL" ]; then
+    tmux attach 2>/dev/null || tmux
+  fi
+```
+
 That's it!
 
 ### Installing plugins
