@@ -2,10 +2,15 @@
 
 Requirements: `tmux` version 1.9 (or higher), `git`, `bash`.
 
-Clone TPM and TMUX-RESURRECT:
+Clone TMUX, TPM and TMUX-RESURRECT:
 
 ```bash
+#clone tmux config
+git clone https://github.com/techeddie/tmux_debian.git ~/.config/tmux
+ln -s ~/.config/tmux/.tmux.conf ~
+#clone tpm
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+#clone tmux-resurrect
 git clone https://github.com/tmux-plugins/tmux-resurrect ~/.tmux/plugins/tmux-resurrect
 ```
 
