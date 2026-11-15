@@ -1,107 +1,106 @@
-### Installation
+# tmux_debian
 
-Requirements: `tmux` version 1.9 (or higher), `git`, `bash`.
+[tmux](https://github.com/tmux/tmux) config for Debian servers, with plugins included in the repo so it works offline right after cloning.
 
-Clone TMUX, TPM and TMUX-RESURRECT:
+Part of [dotfiles_debian](https://github.com/techeddie/dotfiles_debian). The installer there sets up tmux and this config.
 
-```bash
-#clone tmux config
-git clone https://github.com/techeddie/tmux_debian.git ~/.config/tmux
-ln -s ~/.config/tmux/.tmux.conf ~
-#clone tpm
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-#clone tmux-resurrect
-git clone https://github.com/tmux-plugins/tmux-resurrect ~/.tmux/plugins/tmux-resurrect
-```
+## Features
 
-Put this at the bottom of `~/.tmux.conf` (`$XDG_CONFIG_HOME/tmux/tmux.conf`
-works too):
+- Most actions without prefix via `Alt` key bindings
+- Windows and panes start at 1, 50 000 lines of scrollback, no escape delay
+- Truecolor support (`Tc` override) for Neovim color schemes
+- Mouse off by default, toggle with `prefix m` / `prefix M`
+- Minimal status bar: date and time on the right
+- Plugins: [tpm](https://github.com/tmux-plugins/tpm), [tmux-resurrect](https://github.com/tmux-plugins/tmux-resurrect), [tmux-yank](https://github.com/tmux-plugins/tmux-yank), [tmux-continuum](https://github.com/tmux-plugins/tmux-continuum)
 
-```bash
-# List of plugins
-set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'tmux-plugins/tmux-sensible'
+## Requirements
 
-# Other examples:
-# set -g @plugin 'github_username/plugin_name'
-# set -g @plugin 'github_username/plugin_name#branch'
-# set -g @plugin 'git@github.com:user/plugin'
-# set -g @plugin 'git@bitbucket.com:user/plugin'
+tmux 3.2 or newer (Debian 12 ships 3.3a), git.
 
-# Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
-run '~/.tmux/plugins/tpm/tpm'
-```
+## Install
 
-Reload TMUX environment so TPM is sourced:
+Recommended: use [dotfiles_debian](https://github.com/techeddie/dotfiles_debian).
+
+Standalone:
 
 ```bash
-# type this in terminal if tmux is already running
-tmux source ~/.tmux.conf
+# tmux from Debian
+sudo apt-get update && sudo apt-get install -y tmux git
+
+# Clone and link into ~/.config
+mkdir -p ~/opt/dotfiles_debian ~/.config
+git clone https://github.com/techeddie/tmux_debian.git ~/opt/dotfiles_debian/tmux_debian
+ln -sfn ~/opt/dotfiles_debian/tmux_debian ~/.config/tmux
+
+# Config hardcodes ~/.tmux.conf and ~/.tmux/plugins/tpm, so link both into $HOME
+ln -sfn ~/.config/tmux/.tmux.conf ~/.tmux.conf
+ln -sfn ~/.config/tmux/.tmux ~/.tmux
 ```
 
-Attach to existing tmux session on login
-```bash
-nvim ~/.bashrc
+tpm and tmux-resurrect are part of the repo. Missing plugins from the list are installed with `prefix I` inside tmux.
 
-#add lines
-if [ -z "$TMUX" ] && [ -z "$LF_LEVEL" ]; then
-  tmux attach 2>/dev/null || tmux
-fi
+## Key bindings
+
+Prefix is the default `Ctrl-b`.
+
+**Windows and sessions**
+
+| Key | Action |
+|---|---|
+| `Alt-n` / `prefix N` / `prefix ,` | new window |
+| `Alt-Tab` / `Alt-S` / `Alt-PgDn` | next window |
+| `Alt-A` / `Alt-PgUp` | previous window |
+| `Alt-W` | window and session tree |
+| `Alt-2` / `prefix i` | rename window |
+| `Alt-3` | rename session |
+| `Alt-D` | detach |
+| `Alt-X` | kill session |
+
+**Panes**
+
+| Key | Action |
+|---|---|
+| `Alt-(` | split side by side |
+| `Alt-*` | split top and bottom |
+| `Alt-Ctrl-h/j/k/l` or `Alt-Ctrl-arrows` | move between panes |
+| `prefix h/j/k/l` | move between panes |
+| `Alt-Z` / `Alt-F` | zoom pane |
+| `prefix H/J/K/L` | move pane to left / bottom / top / right edge |
+| `prefix -` / `prefix 9` | even horizontal layout |
+| `prefix +` / `prefix 8` | even vertical layout |
+| `prefix =` | tiled layout |
+| `Alt-Q` | kill pane |
+
+**Other**
+
+| Key | Action |
+|---|---|
+| `prefix r` | reload config |
+| `prefix m` / `prefix M` | mouse on / off |
+| `prefix S` / `prefix R` | save / restore session (resurrect) |
+| `prefix I` / `prefix U` | install / update plugins (tpm) |
+
+## Tips
+
+Start fish in tmux regardless of the shell tmux was launched from:
+
+```
+# Always start fish in tmux, independent of $SHELL of the calling shell
+set -g default-shell /usr/bin/fish
 ```
 
-That's it!
+Attach to tmux automatically on login (fish, in `~/.config/fish/local.fish`):
 
-### Installing plugins
-
-1. Add new plugin to `~/.tmux.conf` with `set -g @plugin '...'`
-2. Press `prefix` + <kbd>I</kbd> (capital i, as in **I**nstall) to fetch the plugin.
-
-You're good to go! The plugin was cloned to `~/.tmux/plugins/` dir and sourced.
-
-### Uninstalling plugins
-
-1. Remove (or comment out) plugin from the list.
-2. Press `prefix` + <kbd>alt</kbd> + <kbd>u</kbd> (lowercase u as in **u**ninstall) to remove the plugin.
-
-All the plugins are installed to `~/.tmux/plugins/` so alternatively you can
-find plugin directory there and remove it.
-
-### Key bindings
-
-`prefix` + <kbd>I</kbd>
-- Installs new plugins from GitHub or any other git repository
-- Refreshes TMUX environment
-
-`prefix` + <kbd>U</kbd>
-- updates plugin(s)
-
-`prefix` + <kbd>alt</kbd> + <kbd>u</kbd>
-- remove/uninstall plugins not on the plugin list
-
-### Docs
-
-- [Help, tpm not working](docs/tpm_not_working.md) - problem solutions
-
-More advanced features and instructions, regular users probably do not need
-this:
-
-- [How to create a plugin](docs/how_to_create_plugin.md). It's easy.
-- [Managing plugins via the command line](docs/managing_plugins_via_cmd_line.md)
-- [Changing plugins install dir](docs/changing_plugins_install_dir.md)
-- [Automatic TPM installation on a new machine](docs/automatic_tpm_installation.md)
-
-### Tests
-
-Tests for this project run on [Travis CI](https://travis-ci.org/tmux-plugins/tpm).
-
-When run locally, [vagrant](https://www.vagrantup.com/) is required.
-Run tests with:
-
-```bash
-# within project directory
-./run_tests
+```fish
+# Attach or create a session, skip inside tmux and lf
+if not set -q TMUX; and not set -q LF_LEVEL
+    tmux attach 2>/dev/null; or tmux
+end
 ```
 
-### License
+## Files
 
-[MIT](LICENSE.md)
+| File | Purpose |
+|---|---|
+| `.tmux.conf` | config, linked to `~/.tmux.conf` |
+| `.tmux/plugins/` | plugins, linked via `~/.tmux` |
